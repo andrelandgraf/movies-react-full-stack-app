@@ -1,0 +1,13 @@
+{
+    // These are all my auto-save configs
+    "editor.formatOnSave": true,
+    // turn it off for JS and JSX, we will do this via eslint
+    "[javascript][javascriptreact][typescript][typescriptreact]": {
+      "editor.formatOnSave": false
+    },
+    // tell the ESLint plugin to run on save
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "dotenv.enableAutocloaking": false
+  }
