@@ -1,10 +1,10 @@
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
-import type { Movie } from '../movies-api/movies-api.server';
+import type { FilteredMovie } from '../movies-api/movies-api.server';
 import { useMoviesImageProps } from '../movies-api/useMoviesBasePath';
 
 type MovieCardProps = {
-  movie?: Movie;
+  movie?: FilteredMovie;
 };
 
 export function MovieCard({ movie }: MovieCardProps) {
@@ -59,7 +59,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 
 type MoviesGridProps = {
   children: ReactNode;
-  movies: Movie[];
+  movies: FilteredMovie[];
   className?: string;
   isLoading?: boolean;
 };

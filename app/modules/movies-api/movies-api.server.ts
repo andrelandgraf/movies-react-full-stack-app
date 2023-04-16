@@ -27,7 +27,7 @@ function isErrorResponse(data: unknown): data is ErrorResponse {
   );
 }
 
-export type Movie = {
+type Movie = {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -51,6 +51,25 @@ type MoviesData = {
   total_results: number;
 };
 
+export type FilteredMovie = Pick<
+  Movie,
+  'id' | 'title' | 'poster_path' | 'popularity' | 'release_date'
+>;
+
+export function filterMovie(movie: Movie): FilteredMovie {
+  return {
+    id: movie.id,
+    title: movie.title,
+    poster_path: movie.poster_path,
+    popularity: movie.popularity,
+    release_date: movie.release_date,
+  };
+}
+
+export function filterAdultMovies(movies: Movie[]): Movie[] {
+  return movies.filter((movie) => !movie.adult);
+}
+
 function isMoviesData(data: unknown): data is MoviesData {
   return (
     !!data &&
@@ -65,7 +84,7 @@ export type Endpoint = 'popular' | 'top_rated' | 'upcoming' | 'now_playing';
 export async function fetchMovies(
   endpoint: Endpoint,
   languageCode = 'en-US'
-): Promise<Movie[]> {
+): Promise<FilteredMovie[]> {
   const url = `${baseUrl}/movie/${endpoint}?api_key=${apiKey}&language=${languageCode}`;
   const response = await fetch(url);
   const data = await response.json();
@@ -76,10 +95,10 @@ export async function fetchMovies(
     console.error(url, data);
     throw new Error('Unexpected response');
   }
-  return data.results;
+  return filterAdultMovies(data.results).map(filterMovie);
 }
 
-export type MoviesAPIConfiguration = {
+type MoviesAPIConfiguration = {
   images: {
     base_url: string;
     secure_base_url: string;
@@ -88,6 +107,14 @@ export type MoviesAPIConfiguration = {
     poster_sizes: string[];
     profile_sizes: string[];
     still_sizes: string[];
+  };
+};
+
+export type FilteredMoviesAPIConfiguration = {
+  images: {
+    secure_base_url: MoviesAPIConfiguration['images']['secure_base_url'];
+    poster_sizes: MoviesAPIConfiguration['images']['poster_sizes'];
+    backdrop_sizes: MoviesAPIConfiguration['images']['backdrop_sizes'];
   };
 };
 
@@ -105,7 +132,7 @@ function isMoviesAPIConfiguration(
   );
 }
 
-export async function fetchConfiguration(): Promise<MoviesAPIConfiguration> {
+export async function fetchConfiguration(): Promise<FilteredMoviesAPIConfiguration> {
   const response = await fetch(`${baseUrl}/configuration?api_key=${apiKey}`);
   const data = await response.json();
   if (isErrorResponse(data)) {
@@ -114,7 +141,13 @@ export async function fetchConfiguration(): Promise<MoviesAPIConfiguration> {
   if (!isMoviesAPIConfiguration(data)) {
     throw new Error('Unexpected response');
   }
-  return data;
+  return {
+    images: {
+      secure_base_url: data.images.secure_base_url,
+      poster_sizes: data.images.poster_sizes,
+      backdrop_sizes: data.images.backdrop_sizes,
+    },
+  };
 }
 
 type LanguageObject = {
