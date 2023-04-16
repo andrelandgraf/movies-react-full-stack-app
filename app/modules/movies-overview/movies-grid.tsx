@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
-import type { Movie } from '../movies-api/movies-api.server';
+import type { Movie } from '../movies-api/movies-api';
 import { useMoviesImageProps } from '../movies-api/useMoviesBasePath';
 
 type MovieCardProps = {
@@ -8,7 +8,7 @@ type MovieCardProps = {
 };
 
 export function MovieCard({ movie }: MovieCardProps) {
-  const imageProps = useMoviesImageProps(movie?.poster_path, 220);
+  const imageProps = useMoviesImageProps(movie?.poster_path, 150);
   if (!movie) {
     return (
       <li className="flex flex-col w-[220px] items-center">

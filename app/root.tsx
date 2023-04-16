@@ -7,8 +7,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react';
-
 import stylesheetPath from '~/tailwind.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { getMoviesAPIKey } from './modules/movies-api/env.server';
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheetPath },
@@ -22,7 +23,11 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
-export { loader } from '~/modules/movies-api/useMoviesConfig';
+export function loader() {
+  return { apiKey: getMoviesAPIKey() };
+}
+
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
@@ -32,7 +37,9 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

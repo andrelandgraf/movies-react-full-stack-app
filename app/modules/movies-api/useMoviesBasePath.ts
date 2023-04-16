@@ -1,6 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import type { ImgHTMLAttributes, SyntheticEvent } from 'react';
 import { useRef } from 'react';
-import { useMoviesConfig } from './useMoviesConfig';
+import type { MoviesAPIConfiguration } from './movies-api';
+import { fetchConfiguration } from './movies-api';
+import { useMoviesAPIKey } from './useAPIKey';
 
 function findBestSize(
   widthSizes: string[], // ["w92", "w154", "w185", "w342", "w500", "w780", original]
@@ -22,9 +25,14 @@ export function useMoviesImageProps(
   widthInPixels: number
 ): ImgHTMLAttributes<HTMLImageElement> | null {
   const retries = useRef(0);
-  const configData = useMoviesConfig();
-
-  if (!path) {
+  const apiKey = useMoviesAPIKey();
+  const query = useQuery<MoviesAPIConfiguration>({
+    queryKey: ['moviesAPIConfiguration'],
+    queryFn: () => fetchConfiguration(apiKey),
+    staleTime: Infinity,
+    useErrorBoundary: true,
+  });
+  if (!query.data || !path) {
     return null;
   }
 
@@ -32,7 +40,7 @@ export function useMoviesImageProps(
     secure_base_url: baseUrl,
     poster_sizes: posterSizes,
     backdrop_sizes: backdropSizes,
-  } = configData.images;
+  } = query.data.images;
 
   const bestPosterWidth = findBestSize(posterSizes, widthInPixels);
   const bestBackdropWidth = findBestSize(backdropSizes, widthInPixels);

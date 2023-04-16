@@ -1,16 +1,4 @@
-import invariant from 'tiny-invariant';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
 const baseUrl = 'https://api.themoviedb.org/3';
-
-const envApiKey: unknown = process.env.MOVIES_API_KEY;
-invariant(
-  envApiKey && typeof envApiKey === 'string',
-  'MOVIES_API_KEY key is required'
-);
-const apiKey: string = envApiKey;
 
 type ErrorResponse = {
   status_code: number;
@@ -64,6 +52,7 @@ export type Endpoint = 'popular' | 'top_rated' | 'upcoming' | 'now_playing';
 
 export async function fetchMovies(
   endpoint: Endpoint,
+  apiKey: string,
   languageCode = 'en-US'
 ): Promise<Movie[]> {
   const url = `${baseUrl}/movie/${endpoint}?api_key=${apiKey}&language=${languageCode}`;
@@ -105,7 +94,9 @@ function isMoviesAPIConfiguration(
   );
 }
 
-export async function fetchConfiguration(): Promise<MoviesAPIConfiguration> {
+export async function fetchConfiguration(
+  apiKey: string
+): Promise<MoviesAPIConfiguration> {
   const response = await fetch(`${baseUrl}/configuration?api_key=${apiKey}`);
   const data = await response.json();
   if (isErrorResponse(data)) {
@@ -138,7 +129,7 @@ function isLanguageArray(data: unknown): data is LanguageObject[] {
   );
 }
 
-export async function fetchLanguageCodes(): Promise<string[]> {
+export async function fetchLanguageCodes(apiKey: string): Promise<string[]> {
   const response = await fetch(
     `${baseUrl}/configuration/languages?api_key=${apiKey}`
   );
