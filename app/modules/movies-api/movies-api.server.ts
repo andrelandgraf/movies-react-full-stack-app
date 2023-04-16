@@ -118,6 +118,32 @@ export type FilteredMoviesAPIConfiguration = {
   };
 };
 
+type ConfigCache = {
+  filteredConfiguration: FilteredMoviesAPIConfiguration | null;
+  lastFetched: number | null;
+};
+
+const cache: ConfigCache = {
+  filteredConfiguration: null,
+  lastFetched: null,
+};
+
+function getCachedConfig(): FilteredMoviesAPIConfiguration | null {
+  if (
+    cache.filteredConfiguration &&
+    cache.lastFetched &&
+    Date.now() - cache.lastFetched < 1000 * 60 * 60 * 24
+  ) {
+    return cache.filteredConfiguration;
+  }
+  return null;
+}
+
+function updateCache(config: FilteredMoviesAPIConfiguration) {
+  cache.filteredConfiguration = config;
+  cache.lastFetched = Date.now();
+}
+
 function isMoviesAPIConfiguration(
   data: unknown
 ): data is MoviesAPIConfiguration {
@@ -133,6 +159,10 @@ function isMoviesAPIConfiguration(
 }
 
 export async function fetchConfiguration(): Promise<FilteredMoviesAPIConfiguration> {
+  const cachedConfig = getCachedConfig();
+  if (cachedConfig) {
+    return cachedConfig;
+  }
   const response = await fetch(`${baseUrl}/configuration?api_key=${apiKey}`);
   const data = await response.json();
   if (isErrorResponse(data)) {
@@ -141,13 +171,15 @@ export async function fetchConfiguration(): Promise<FilteredMoviesAPIConfigurati
   if (!isMoviesAPIConfiguration(data)) {
     throw new Error('Unexpected response');
   }
-  return {
+  const filteredConfig = {
     images: {
       secure_base_url: data.images.secure_base_url,
       poster_sizes: data.images.poster_sizes,
       backdrop_sizes: data.images.backdrop_sizes,
     },
   };
+  updateCache(filteredConfig);
+  return filteredConfig;
 }
 
 type LanguageObject = {

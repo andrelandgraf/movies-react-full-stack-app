@@ -11,12 +11,19 @@ export async function loader() {
       fetchMovies('top_rated'),
       fetchMovies('upcoming'),
     ]);
-  return json({
-    popularMovies,
-    nowPlayingMovies,
-    topRatedMovies,
-    upcomingMovies,
-  });
+  return json(
+    {
+      popularMovies,
+      nowPlayingMovies,
+      topRatedMovies,
+      upcomingMovies,
+    },
+    {
+      headers: {
+        'Cache-Control': 'private, max-age=600, stale-while-revalidate=300',
+      },
+    }
+  );
 }
 
 export function MoviesOverview() {

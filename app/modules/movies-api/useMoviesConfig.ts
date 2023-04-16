@@ -6,7 +6,14 @@ import { fetchConfiguration } from './movies-api.server';
 
 export async function loader() {
   const moviesConfig = await fetchConfiguration();
-  return json({ moviesConfig });
+  return json(
+    { moviesConfig },
+    {
+      headers: {
+        'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600',
+      },
+    }
+  );
 }
 
 export function useMoviesConfig() {
