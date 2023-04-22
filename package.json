@@ -13,7 +13,6 @@
     "@vercel/node": "^2.10.3",
     "@vercel/remix": "^1.15.0",
     "clsx": "^1.2.1",
-    "dotenv": "^16.0.3",
     "isbot": "^3.6.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

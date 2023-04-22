@@ -1,7 +1,4 @@
 import invariant from 'tiny-invariant';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const baseUrl = 'https://api.themoviedb.org/3';
 
