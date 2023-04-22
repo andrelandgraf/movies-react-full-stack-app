@@ -1,4 +1,4 @@
-import { json } from '@remix-run/node';
+import { json } from '@vercel/remix';
 import { useLoaderData } from '@remix-run/react';
 import { fetchMovies } from '../movies-api/movies-api.server';
 import { MoviesGrid } from './movies-grid';

@@ -1,4 +1,4 @@
-import { json } from '@remix-run/node';
+import { json } from '@vercel/remix';
 import { useRouteLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import type { FilteredMoviesAPIConfiguration } from './movies-api.server';

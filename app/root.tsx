@@ -22,6 +22,8 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
+export const config = { runtime: 'edge' };
+
 export { loader } from '~/modules/movies-api/useMoviesConfig';
 
 export default function App() {

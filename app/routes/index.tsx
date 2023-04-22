@@ -5,6 +5,8 @@ export {
   loader,
 } from '../modules/movies-overview/movies-overview';
 
+export const config = { runtime: 'edge' };
+
 export default function Component() {
   return (
     <main className="w-full p-2 lg:p-8">
